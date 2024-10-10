@@ -316,8 +316,7 @@ public class AutonomousCharacter : NPC
             }
             else if (MCTSActive)
             {
-                throw new Exception("MCTS Needs to be initialized...");
-                //this.MCTSDecisionMaking.InitializeMCTSearch();
+                this.MCTSDecisionMaking.InitializeMCTSearch();
             }
             //else if ()
             {
@@ -359,6 +358,10 @@ public class AutonomousCharacter : NPC
         else if (this.GOBActive)
         {
             this.UpdateGOB();
+        }
+        else if (this.MCTSActive)
+        {
+            this.UpdateMCTS(this.MCTSDecisionMaking);
         }
  
 
