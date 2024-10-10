@@ -6,7 +6,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 {
     public abstract class WalkToTargetAndExecuteAction : Action
     {
-        protected AutonomousCharacter Character { get; set; }
 
         public GameObject Target { get; set; }
 

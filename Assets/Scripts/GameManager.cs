@@ -98,6 +98,37 @@ public class GameManager : MonoBehaviour
 
 
         this.initialPosition = this.Character.gameObject.transform.position;
+        // Orc formation setup
+        SetupOrcFormation();
+    }
+
+    private void SetupOrcFormation()
+    {
+        // Find Orcs 3, 4, and 5 in the scene (assuming they are named "Orc3", "Orc4", "Orc5")
+        GameObject orc3 = GameObject.Find("Orc3");
+        GameObject orc4 = GameObject.Find("Orc4");
+        GameObject orc5 = GameObject.Find("Orc5");
+
+        if (orc3 == null || orc4 == null || orc5 == null)
+        {
+            Debug.LogError("Orcs 3, 4, or 5 could not be found in the scene.");
+            return;
+        }
+
+        // Store them in a list to represent the formation
+        List<GameObject> orcFormation = new List<GameObject> { orc3, orc4, orc5 };
+
+        // Define formation properties
+        Vector3 formationCenter = (orc3.transform.position + orc4.transform.position + orc5.transform.position) / 3;
+        float formationSpacing = 2.0f; // Example spacing between orcs
+
+        // Set up positions relative to the center (e.g., a triangle formation)
+        orc3.transform.position = formationCenter + new Vector3(-formationSpacing, 0, -formationSpacing);
+        orc4.transform.position = formationCenter + new Vector3(formationSpacing, 0, -formationSpacing);
+        orc5.transform.position = formationCenter + new Vector3(0, 0, formationSpacing);
+
+        // Additional formation logic (e.g., movement or behavior as a group) can be added here
+        Debug.Log("Orc formation has been set up.");
     }
 
     public void UpdateDisposableObjects()

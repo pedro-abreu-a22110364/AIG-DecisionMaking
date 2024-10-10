@@ -7,7 +7,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 {
     public class LevelUp : Action
     {
-        public AutonomousCharacter Character { get; private set; }
 
         public LevelUp(AutonomousCharacter character) : base("LevelUp")
         {

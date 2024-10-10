@@ -563,8 +563,8 @@ public class AutonomousCharacter : NPC
         }
     }
 
-    // You'll need this, when using MCTS
-    /*private void UpdateMCTS(MCTS mCTS)
+    //You'll need this, when using MCTS
+    private void UpdateMCTS(MCTS mCTS)
     {
         if (mCTS.InProgress)
         {
@@ -603,12 +603,12 @@ public class AutonomousCharacter : NPC
             if (endState != null)
             {
                 text += "Predicted World State:\n";
-                text += "My Level:" + endState.GetProperty(Properties.LEVEL) + "\n";
-                text += "My HP:" + endState.GetProperty(Properties.HP) + "\n";
-                text += "My Money:" + endState.GetProperty(Properties.MONEY) + "\n";
-                text += "Time Passsed:" + endState.GetProperty(Properties.TIME) + "\n";
+                text += "My Level:" + endState.GetProperty(PropertiesName.LEVEL) + "\n";
+                text += "My HP:" + endState.GetProperty(PropertiesName.HP) + "\n";
+                text += "My Money:" + endState.GetProperty(PropertiesName.MONEY) + "\n";
+                text += "Time Passsed:" + endState.GetProperty(PropertiesName.TIME) + "\n";
                 this.BestActionText.text = text;
-                if ((int)endState.GetProperty(Properties.HP) < 0 || (float)endState.GetProperty(Properties.TIME) > 150)
+                if ((int)endState.GetProperty(PropertiesName.HP) < 0 || (float)endState.GetProperty(PropertiesName.TIME) > 150)
                 {
                     //stop here
                 }
@@ -622,7 +622,7 @@ public class AutonomousCharacter : NPC
         }
 
 
-    }*/
+    }
 
 
 
