@@ -47,12 +47,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
                 new ReachedPatrolPoint(Agent, PatrolPoint1, PatrolPoint2, movingToPoint1)
             };
         }
-
-        public void SwitchPatrolPoint()
-        {
-            movingToPoint1 = !movingToPoint1;  // Toggle between the two patrol points
-            Debug.Log(Agent.name + " switched patrol point. Now moving to " + (movingToPoint1 ? "PatrolPoint1" : "PatrolPoint2"));
-        }
     }
 }
 
