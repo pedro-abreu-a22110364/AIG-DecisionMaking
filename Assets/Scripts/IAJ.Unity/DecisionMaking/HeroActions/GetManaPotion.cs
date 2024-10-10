@@ -58,7 +58,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
             if (goal.Name == AutonomousCharacter.SURVIVE_GOAL)
             {
                 // If mana is needed for survival-related actions, reduce the insistence of the survival goal
-                change -= goal.InsistenceValue * 0.5f; // Adjust value based on mana importance
+                change -= goal.InsistenceValue * 0.2f; // Adjust value based on mana importance
             }
             else if (goal.Name == AutonomousCharacter.BE_QUICK_GOAL)
             {

@@ -10,7 +10,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         private const int SHIELD_AMOUNT = 5; // Amount of shield provided
         private const int MANA_COST = 5; // Mana cost for casting Shield of Faith
 
-        public ShieldOfFaith(AutonomousCharacter character) : base("GetManaPotion", character)
+        public ShieldOfFaith(AutonomousCharacter character) : base("ShieldOfFaith", character)
         {
         }
 

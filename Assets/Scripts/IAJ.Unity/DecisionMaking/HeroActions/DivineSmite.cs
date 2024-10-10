@@ -63,6 +63,12 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
             return base.CanExecute() && Character.baseStats.Mana >= MANA_COST && this.Target.tag.Equals("Skeleton");
         }
 
+        public override bool CanExecute(WorldModel worldModel)
+        {
+            // Check if the character has enough mana to use Divine Smite
+            return base.CanExecute(worldModel) && (int)worldModel.GetProperty(PropertiesName.MANA) >= MANA_COST && this.Target.tag.Equals("Skeleton");
+        }
+
         public override float GetHValue(WorldModel worldModel)
         {
             // Heuristic value might remain similar as it was before
