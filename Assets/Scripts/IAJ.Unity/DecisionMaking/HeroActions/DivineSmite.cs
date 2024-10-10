@@ -53,7 +53,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
                 worldModel.SetProperty(PropertiesName.XP, currentXP + this.xpChange);
 
                 // Deduct mana cost for using Divine Smite
-                Character.baseStats.Mana -= MANA_COST;
+                int currentMana = (int)worldModel.GetProperty(PropertiesName.MANA);
+                worldModel.SetProperty(PropertiesName.MANA, currentMana - MANA_COST);
             }
         }
 
