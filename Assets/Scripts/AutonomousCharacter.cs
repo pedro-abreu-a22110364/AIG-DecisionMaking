@@ -529,7 +529,7 @@ public class AutonomousCharacter : NPC
         bool newDecision = false;
         if (this.GOAPDecisionMaking.InProgress)
         {
-            //choose an action using the GOB Decision Making process
+            //choose an action using the GOAP Decision Making process
             var action = this.GOAPDecisionMaking.ChooseAction();
             if (action != null && action != this.CurrentAction)
             {

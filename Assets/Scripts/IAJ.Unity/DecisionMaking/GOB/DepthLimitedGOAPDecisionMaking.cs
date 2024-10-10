@@ -9,7 +9,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
 {
     public class DepthLimitedGOAPDecisionMaking
     {
-        public const int MAX_DEPTH = 2;
+        public const int MAX_DEPTH = 3;
         public int ActionCombinationsProcessedPerFrame { get; set; }
         public float TotalProcessingTime { get; set; }
         public int TotalActionCombinationsProcessed { get; set; }
@@ -64,6 +64,11 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
                     {
                         this.BestDiscontentmentValue = currentValue;
                         this.BestAction = this.LevelAction[0];
+
+                        for (int i = 0; i < this.CurrentDepth; i++)
+                        {
+                            this.BestActionSequence[i] = this.LevelAction[i];
+                        }
                     }
 
                     this.CurrentDepth--;
@@ -77,7 +82,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
                     this.Models[this.CurrentDepth + 1] = this.Models[this.CurrentDepth].GenerateChildWorldModel();
                     nextAction.ApplyActionEffects(this.Models[this.CurrentDepth + 1]);
                     this.Models[this.CurrentDepth + 1].Character.UpdateGoalsInsistence(this.Models[this.CurrentDepth + 1]);
-                    this.LevelAction[0] = nextAction;
+                    this.LevelAction[this.CurrentDepth] = nextAction;
                     this.CurrentDepth++;
                     processedActions++;
 

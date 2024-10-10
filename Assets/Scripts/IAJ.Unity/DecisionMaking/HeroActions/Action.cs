@@ -10,15 +10,18 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         public int ID { get; set; }
         private Dictionary<Goal, float> GoalEffects { get; set; }
         public float Duration { get; set; }
+        protected AutonomousCharacter Character { get; set; }
 
-        public Action(string name)
+        public Action(string name, AutonomousCharacter character)
         {
             this.ID = Action.ActionID++;
             this.Name = name;
             this.GoalEffects = new Dictionary<Goal, float>();
             this.Duration = 0.0f;
-
+            this.Character = character;
         }
+
+        public Action(string name) : this(name,null) { }
 
         // Used for GOB Decison Making
         public virtual float GetGoalChange(Goal goal)
