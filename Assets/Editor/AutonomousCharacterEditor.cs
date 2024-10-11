@@ -24,7 +24,7 @@ public class AutonomousCharacterEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("GetManaPotion"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("ShieldOfFaith"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("DivineSmite"));
-        //EditorGUILayout.PropertyField(serializedObject.FindProperty("Teleport"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Teleport"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("LayOnHands"));
         //EditorGUILayout.PropertyField(serializedObject.FindProperty("Rest"));
 
