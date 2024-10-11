@@ -72,8 +72,16 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             while (this.CurrentIterations < this.MaxIterations)
             {
                 selectedNode = this.Selection(this.InitialNode); // Selection + Expansion
-                reward = this.Playout(selectedNode.State);       // Playout
-                Debug.Log(reward);
+
+                if (GameManager.Instance.StochasticWorld)
+                {
+                    reward = this.PlayoutStochastic(selectedNode.State);    // Playout
+                } 
+                else
+                {
+                    reward = this.Playout(selectedNode.State);       // Playout
+                }
+
                 this.Backpropagate(selectedNode, reward);        // Backpropagation
                 this.CurrentIterations++;
             }
@@ -165,21 +173,56 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return currentState.GetScore();
         }
 
+        protected virtual float PlayoutStochastic(WorldModel initialStateForPlayout)
+        {
+            float bestReward = float.MinValue;
+
+            for (int i = 0; i < this.NumberPlayouts; i++)
+            {
+                WorldModel currentState = initialStateForPlayout.GenerateChildWorldModel(); // Clone the state for each playout
+                int depth = 0;
+
+                // Perform a single playout simulation until terminal state or depth limit
+                while (!currentState.IsTerminal() && depth < this.PlayoutDepthLimit)
+                {
+                    var executableActions = currentState.GetExecutableActions();
+                    if (executableActions.Length == 0) break;
+
+                    var randomAction = executableActions[this.RandomGenerator.Next(executableActions.Length)];
+                    randomAction.ApplyActionEffects(currentState);
+
+                    currentState.CalculateNextPlayer(); // Determine the next player after action
+
+                    depth++;
+                }
+
+                // Update the best reward if this playout's score is higher
+                float playoutScore = currentState.GetScore();
+                if (playoutScore > bestReward)
+                {
+                    bestReward = playoutScore;
+                }
+            }
+
+            // Return the best reward among all playouts
+            return bestReward;
+        }
+
         protected virtual void Backpropagate(MCTSNode node, float reward)
         {
             while (node != null)
             {
                 node.N++;
-                node.Q += reward; // For maximizing player
 
-                /*if (node.Parent != null && node.Parent.PlayerID == 1)
+                //if (node.Parent != null && node.Parent.PlayerID == 1)
+                if (node.PlayerID == 1)
                 {
-                    node.Q -= reward; // For opponent, minimize reward
+                    node.Q -= reward; // Opponent aims to minimize the root player's reward
                 }
                 else
                 {
-                    node.Q += reward; // For maximizing player
-                }*/
+                    node.Q += reward; // Root player aims to maximize the reward
+                }
 
                 node = node.Parent;
             }
@@ -251,36 +294,3 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
         }
     }
 }
-
-/* playout no caso de ser estocástico:
- 
-protected virtual float Playout(WorldModel initialStateForPlayout)
-{
-    float totalReward = 0.0f;
-
-    for (int i = 0; i < this.NumberPlayouts; i++)
-    {
-        WorldModel currentState = initialStateForPlayout.Clone(); // Clone the state for each playout
-        int depth = 0;
-
-        // Perform a single playout simulation until terminal state or depth limit
-        while (!currentState.IsTerminal() && depth < this.PlayoutDepthLimit)
-        {
-            var executableActions = currentState.GetExecutableActions();
-            if (executableActions.Length == 0) break;
-
-            var randomAction = executableActions[this.RandomGenerator.Next(executableActions.Length)];
-            randomAction.ApplyActionEffects(currentState);
-            depth++;
-        }
-
-        // Add the reward from this playout to the total reward
-        totalReward += currentState.GetScore();
-    }
-
-    // Return the average reward over all playouts
-    return totalReward / this.NumberPlayouts;
-} */
-
-
-
