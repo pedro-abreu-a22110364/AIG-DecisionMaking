@@ -13,7 +13,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         public DivineSmite(AutonomousCharacter character, GameObject target) : base("DivineSmite", character, target)
         {
             // Set XP change based on the type of enemy defeated
-            this.xpChange = target.tag.Equals("Skeleton") ? 10 : 0; // Set appropriate XP gain for defeating skeletons
+            this.xpChange = target.tag.Equals("Skeleton") ? 3 : 0; // Set appropriate XP gain for defeating skeletons
         }
 
         public override float GetGoalChange(Goal goal)
