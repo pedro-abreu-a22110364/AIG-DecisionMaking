@@ -38,7 +38,7 @@ namespace Assets.Scripts.Game.NPCs
         {
             GetPatrolPositions(out pos1,out pos2);
 
-            Debug.Log(agent.name + ": Patrol point 1 - " + pos1 + "; Patrol point 2 - " + pos2);
+            //Debug.Log(agent.name + ": Patrol point 1 - " + pos1 + "; Patrol point 2 - " + pos2);
 
             this.StateMachine = new StateMachine(new Patrol(this,pos1,pos2,true));
         }

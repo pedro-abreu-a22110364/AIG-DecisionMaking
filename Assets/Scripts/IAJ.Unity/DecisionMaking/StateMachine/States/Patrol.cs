@@ -29,7 +29,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
         public List<IAction> GetActions()
         {
             var currentTarget = movingToPoint1 ? PatrolPoint1 : PatrolPoint2;
-            Debug.Log(Agent.name + " is moving towards " + (movingToPoint1 ? "PatrolPoint1" : "PatrolPoint2"));
+            //Debug.Log(Agent.name + " is moving towards " + (movingToPoint1 ? "PatrolPoint1" : "PatrolPoint2"));
             return new List<IAction> { new MoveTo(Agent, currentTarget) };
         }
 

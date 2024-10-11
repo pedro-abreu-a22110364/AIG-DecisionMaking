@@ -73,12 +73,14 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             {
                 selectedNode = this.Selection(this.InitialNode); // Selection + Expansion
                 reward = this.Playout(selectedNode.State);       // Playout
+                Debug.Log(reward);
                 this.Backpropagate(selectedNode, reward);        // Backpropagation
                 this.CurrentIterations++;
             }
 
             this.TotalProcessingTime += Time.realtimeSinceStartup - startTime;
 
+            this.InProgress = false ;
             return this.BestAction(this.InitialNode);            // Return the best action
         }
 
@@ -148,7 +150,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
         protected virtual float Playout(WorldModel initialStateForPlayout)
         {
             int depth = 0;
-            var currentState = initialStateForPlayout;
+            var currentState = initialStateForPlayout.GenerateChildWorldModel();
 
             while (!currentState.IsTerminal() && depth < this.PlayoutDepthLimit)
             {
@@ -168,14 +170,17 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             while (node != null)
             {
                 node.N++;
-                if (node.Parent != null && node.Parent.PlayerID == 1)
+                node.Q += reward; // For maximizing player
+
+                /*if (node.Parent != null && node.Parent.PlayerID == 1)
                 {
                     node.Q -= reward; // For opponent, minimize reward
                 }
                 else
                 {
                     node.Q += reward; // For maximizing player
-                }
+                }*/
+
                 node = node.Parent;
             }
         }

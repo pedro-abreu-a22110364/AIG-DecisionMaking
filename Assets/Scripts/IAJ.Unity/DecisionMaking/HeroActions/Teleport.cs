@@ -6,12 +6,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 {
     public class Teleport : Action
     {
-        private Vector3 initialPosition;
 
-        public Teleport(AutonomousCharacter character, Vector3 initialPosition) : base("Teleport", character)
-        {
-            this.initialPosition = initialPosition; // Initial position is passed in the constructor
-        }
+        public Teleport(AutonomousCharacter character) : base("Teleport", character) { }
 
         public override bool CanExecute()
         {
@@ -25,7 +21,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
             Character.baseStats.Mana -= 5;
 
             // Teleport to the initial position
-            Character.transform.position = initialPosition;
+            GameManager.Instance.Teleport();
             Debug.Log("Teleport executed: Sir Uthgard teleported to the initial position.");
         }
 

@@ -192,8 +192,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
                 return 1.0f;
             else
             { // non-terminal state
-                return 0.0f;
-                //return timeAndMoneyScore(time, money) * levelScore() * hpScore(HP) * timeScore(time);
+                return timeAndMoneyScore(time, money) * levelScore() * hpScore(HP) * timeScore(time);
             }
         }
 
