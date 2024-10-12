@@ -98,11 +98,12 @@ public class GameManager : MonoBehaviour
 
 
         this.initialPosition = this.Character.gameObject.transform.position;
-        // Orc formation setup
-        SetupOrcFormation();
+
+        if (formationSettings != FormationSettings.NoFormations)
+            foreach (FormationManager formation in Formations) { if (formation != null) SetupOrcFormation(formation.Pattern); }
     }
 
-    private void SetupOrcFormation()
+    private void SetupOrcFormation(FormationPattern formationPattern)
     {
         // Find Orcs 3, 4, and 5 in the scene (assuming they are named "Orc3", "Orc4", "Orc5")
         GameObject orc3 = GameObject.Find("Orc3");
@@ -115,20 +116,26 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Store them in a list to represent the formation
-        List<GameObject> orcFormation = new List<GameObject> { orc3, orc4, orc5 };
+        // Create a list of the orcs
+        List<Monster> orcMonsters = new List<Monster>
+    {
+        orc3.GetComponent<Monster>(),
+        orc4.GetComponent<Monster>(),
+        orc5.GetComponent<Monster>()
+    };
 
-        // Define formation properties
-        Vector3 formationCenter = (orc3.transform.position + orc4.transform.position + orc5.transform.position) / 3;
-        float formationSpacing = 2.0f; // Example spacing between orcs
+        // Define an anchor position for the formation (you can adjust this)
+        Vector3 anchorPosition = new Vector3(-26.7f, 0, -33.8f);  // Set to the center where you want the formation
+        Vector3 orientation = Vector3.forward;  // Set the direction in which the formation faces
+        orcMonsters[2].SetFormationLeader();
 
-        // Set up positions relative to the center (e.g., a triangle formation)
-        orc3.transform.position = formationCenter + new Vector3(-formationSpacing, 0, -formationSpacing);
-        orc4.transform.position = formationCenter + new Vector3(formationSpacing, 0, -formationSpacing);
-        orc5.transform.position = formationCenter + new Vector3(0, 0, formationSpacing);
+        // Create the FormationManager with the selected formation type
+        FormationManager formationManager = new FormationManager(orcMonsters, formationPattern, anchorPosition, orientation);
 
-        // Additional formation logic (e.g., movement or behavior as a group) can be added here
-        Debug.Log("Orc formation has been set up.");
+        // Update the positions of the orcs based on the selected formation
+        formationManager.UpdateSlots();
+
+        Debug.Log("Orc formation has been set up using " + formationPattern.GetType().Name + ".");
     }
 
     public void UpdateDisposableObjects()

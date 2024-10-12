@@ -49,18 +49,18 @@ namespace Assets.Scripts.Game
 
         public void StartPathfinding(Vector3 targetPosition)
         {
-            //if the targetPosition received is the same as a previous target, then this a request for the same target
-            //no need to redo the pathfinding search
-            navMeshAgent.isStopped = false;
-            if (!this.previousTarget.Equals(targetPosition))
+            NavMeshAgent agent = GetComponent<NavMeshAgent>();
+            if (agent != null)
             {
-
-                this.previousTarget = targetPosition;
-
-                navMeshAgent.SetDestination(targetPosition);
-
+                agent.SetDestination(targetPosition);  // Set the destination to the target slot position
+                agent.isStopped = false;  // Ensure the agent is not stopped
+            }
+            else
+            {
+                Debug.LogError("NavMeshAgent not found on NPC: " + name);  // Error if NavMeshAgent is missing
             }
         }
+
 
         public void StopPathfinding()
         {

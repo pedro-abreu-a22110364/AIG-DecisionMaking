@@ -155,6 +155,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return null;
         }
 
+        //normal MCTS playout
+
         protected virtual float Playout(WorldModel initialStateForPlayout)
         {
             int depth = 0;
@@ -171,7 +173,47 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             }
 
             return currentState.GetScore();
+        } 
+
+        //limited MCTS playout
+
+        /*protected virtual float Playout(WorldModel initialStateForPlayout)
+        {
+            int depth = 0;
+            var currentState = initialStateForPlayout.GenerateChildWorldModel();
+
+            while (!currentState.IsTerminal() && depth < 50)
+            {
+                var executableActions = currentState.GetExecutableActions();
+                if (executableActions.Length == 0) break;
+
+                var randomAction = executableActions[this.RandomGenerator.Next(executableActions.Length)];
+                randomAction.ApplyActionEffects(currentState);
+
+                depth++;
+            }
+
+            if (!currentState.IsTerminal())
+            {
+                return this.HeuristicEvaluation(currentState);
+            }
+
+            return currentState.GetScore();
         }
+
+        protected virtual float HeuristicEvaluation(WorldModel state)
+        {
+            float playerHealth = (int)state.GetProperty(PropertiesName.HP); 
+            float playerLevel = (int)state.GetProperty(PropertiesName.LEVEL);
+
+            float heuristicScore = playerHealth * 0.5f
+                                  + playerLevel * 1.0f;
+
+            // Return the heuristic score
+            return heuristicScore;
+        } */
+
+
 
         protected virtual float PlayoutStochastic(WorldModel initialStateForPlayout)
         {

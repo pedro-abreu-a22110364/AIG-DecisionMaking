@@ -136,7 +136,28 @@ namespace Assets.Scripts.Game.NPCs
 
         public virtual void SetFormationLeader()
         {
-            // ToDo
+            // Mark this NPC as the leader
+            this.formationLeader = true;
+
+            // Optionally, update the FormationManager to reflect this change
+            if (this.FormationManager != null)
+            {
+                // Ensure all other NPCs are not leaders
+                foreach (var npc in this.FormationManager.SlotAssignment.Keys)
+                {
+                    if (npc != this)
+                    {
+                        npc.formationLeader = false;
+                    }
+                }
+            }
+
+            // Log or perform any additional logic for the leader (e.g., visual changes)
+            Debug.Log(this.name + " is now the formation leader!");
+
+            // (Optional) You can add additional logic here to perform actions like:
+            // - Recalculate formation based on new leader position
+            // - Make the leader NPC follow a special behavior (e.g., pathfinding control)
         }
     }
 }

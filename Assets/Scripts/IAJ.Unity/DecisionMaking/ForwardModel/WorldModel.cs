@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Assets.Scripts.IAJ.Unity.Utils;
 using Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions;
+using Assets.Scripts.Game.NPCs;
 
 namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
 {
