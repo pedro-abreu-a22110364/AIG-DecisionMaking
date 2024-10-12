@@ -68,5 +68,12 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
             // Assuming this action takes a specific amount of time in-game (e.g., 2 seconds)
             return 2.0f;
         }
+        public override float GetHValue(WorldModel worldModel)
+        {
+            var currentHP = (int)worldModel.GetProperty(PropertiesName.HP);
+            var maxHP = (int)worldModel.GetProperty(PropertiesName.MAXHP);
+
+            return currentHP / maxHP * 0.5f;
+        }
     }
 }

@@ -57,5 +57,10 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         {
             return 1.0f;
         }
+
+        public override float GetHValue(WorldModel worldModel)
+        {
+            return -10; //ToDo if the character is far from the objetive this should be prioritize
+        }
     }
 }

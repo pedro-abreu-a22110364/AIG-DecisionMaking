@@ -65,11 +65,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
         // Example heuristic evaluation function for actions
         protected float EvaluateActionHeuristic(HeroActions.Action action, WorldModel currentState)
         {
-            // Implement heuristics based on the type of action or the resulting state
-            // Example: Higher value for attack actions, lower for wait actions, etc.
-            if (action.Name.Contains("Attack")) return 10.0f;
-            if (action.Name.Contains("Defend")) return 5.0f;
-            return 1.0f; // Default lower value for non-preferred actions
+            return action.GetHValue(currentState);
         }
     }
 }
