@@ -9,6 +9,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
     public class GOBDecisionMaking
     {
         public bool InProgress { get; set; }
+        public float TotalProcessingTime { get; set; }
+        public int TotalActionCombinationsProcessed { get; set; }
         private List<Goal> goals { get; set; }
         private List<HeroActions.Action> actions { get; set; }
 
@@ -49,6 +51,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
 
         public HeroActions.Action ChooseAction(AutonomousCharacter character)
         {
+            var startTime = Time.realtimeSinceStartup;
+
             // Find the action leading to the lowest discontentment
             InProgress = true;
             HeroActions.Action bestAction = null;
@@ -84,8 +88,10 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
                         thirdBestAction = action;
                     }
                 }
+                this.TotalActionCombinationsProcessed++;
             }
 
+            this.TotalProcessingTime += Time.realtimeSinceStartup - startTime;
             InProgress = false;
             return bestAction;
         }

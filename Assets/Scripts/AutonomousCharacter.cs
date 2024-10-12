@@ -519,6 +519,12 @@ public class AutonomousCharacter : NPC
         {
             //choose an action using the GOB Decision Making process
             var action = this.GOBDecisionMaking.ChooseAction(this);
+            this.TotalProcessingTime += this.GOBDecisionMaking.TotalProcessingTime;
+            this.TotalActionCombinationsProcessed += this.GOBDecisionMaking.TotalActionCombinationsProcessed;
+
+            this.TotalProcessingTimeText.text = "Process. Time: " + this.TotalProcessingTime.ToString("F");
+            this.ProcessedActionsText.text = "Act. comb. processed: " + this.TotalActionCombinationsProcessed;
+
             if (action != null && action != this.CurrentAction)
             {
                 this.CurrentAction = action;
