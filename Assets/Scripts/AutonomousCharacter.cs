@@ -261,7 +261,9 @@ public class AutonomousCharacter : NPC
             }
             else if (this.MCTSBiasedPlayoutActive)
             {
-                throw new Exception("Needs to be Created");
+                var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                //var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                this.MCTSDecisionMaking = new MCTSBiasedPlayout(WorldModel, MCTS_MaxIterations, MCTS_MaxIterationsPerFrame, MCTS_NumberPlayouts, MCTS_MaxPlayoutDepth);
             }
         }
 
@@ -321,9 +323,9 @@ public class AutonomousCharacter : NPC
             {
                 this.MCTSDecisionMaking.InitializeMCTSearch();
             }
-            //else if ()
+            else if (MCTSBiasedPlayoutActive)
             {
-                
+                this.MCTSDecisionMaking.InitializeMCTSearch();
             }
         }
 
@@ -363,6 +365,10 @@ public class AutonomousCharacter : NPC
             this.UpdateGOB();
         }
         else if (this.MCTSActive)
+        {
+            this.UpdateMCTS(this.MCTSDecisionMaking);
+        }
+        else if (this.MCTSBiasedPlayoutActive)
         {
             this.UpdateMCTS(this.MCTSDecisionMaking);
         }
