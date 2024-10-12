@@ -37,8 +37,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
             this.TotalProcessingTime = 0.0f;
             this.TotalActionCombinationsProcessed = 0;
             this.CurrentDepth = 0;
-            this.Models = new DictionaryWorldModel[MAX_DEPTH + 1];
-            //this.Models = new FixedArrayWorldModel[MAX_DEPTH + 1];
+            //this.Models = new DictionaryWorldModel[MAX_DEPTH + 1];
+            this.Models = new FixedArrayWorldModel[MAX_DEPTH + 1];
             this.Models[0] = this.InitialWorldModel;
             this.LevelAction = new Action[MAX_DEPTH];
             this.BestActionSequence = new Action[MAX_DEPTH];

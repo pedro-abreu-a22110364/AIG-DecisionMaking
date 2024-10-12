@@ -208,12 +208,26 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
 
         public override float GetGoalValue(string goalName)
         {
-            return 0;
+            //recursive implementation of WorldModel
+            if (this.GoalValues.ContainsKey(goalName))
+            {
+                return this.GoalValues[goalName];
+            }
+            else if (this.Parent != null)
+            {
+                return this.Parent.GetGoalValue(goalName);
+            }
+            else  //we are at the base WorldModel, that corresponds to the charactr's perceptions
+            {
+                return this.GoalValues[goalName];
+            }
         }
 
         public override void SetGoalValue(string goalName, float value)
         {
+            this.GoalValues[goalName] = value;
         }
+
 
         // Check if the world state is terminal
         public override bool IsTerminal()

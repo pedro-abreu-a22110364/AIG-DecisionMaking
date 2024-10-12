@@ -13,9 +13,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
         public List<MCTSNode> ChildNodes { get; private set; }
         public int N { get; set; }
         public float Q { get; set; }
-        // These dictionaries will store the cumulative reward and visit count per action
-        public Dictionary<Action, float> ActionQ { get; set; } = new Dictionary<Action, float>();
-        public Dictionary<Action, int> ActionN { get; set; } = new Dictionary<Action, int>();
 
         public MCTSNode(WorldModel state)
         {
