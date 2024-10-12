@@ -44,6 +44,9 @@ public class AutonomousCharacter : NPC
     private Text BestActionSequence;
     private Text DiaryText;
 
+    private float TotalProcessingTime = 0.0f;
+    private int TotalActionCombinationsProcessed = 0;
+
     [Serializable]
     public enum CharacterControlType
     {
@@ -255,14 +258,14 @@ public class AutonomousCharacter : NPC
             }
             else if (this.MCTSActive)
             {
-                var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
-                //var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                //var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
                 this.MCTSDecisionMaking = new MCTS(WorldModel, MCTS_MaxIterations, MCTS_MaxIterationsPerFrame, MCTS_NumberPlayouts, MCTS_MaxPlayoutDepth);
             }
             else if (this.MCTSBiasedPlayoutActive)
             {
-                var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
-                //var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                //var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
                 this.MCTSDecisionMaking = new MCTSBiasedPlayout(WorldModel, MCTS_MaxIterations, MCTS_MaxIterationsPerFrame, MCTS_NumberPlayouts, MCTS_MaxPlayoutDepth);
             }
         }
@@ -543,6 +546,8 @@ public class AutonomousCharacter : NPC
         {
             //choose an action using the GOAP Decision Making process
             var action = this.GOAPDecisionMaking.ChooseAction();
+            this.TotalProcessingTime += this.GOAPDecisionMaking.TotalProcessingTime;
+            this.TotalActionCombinationsProcessed += this.GOAPDecisionMaking.TotalActionCombinationsProcessed;
             if (action != null && action != this.CurrentAction)
             {
                 this.CurrentAction = action;
@@ -550,9 +555,9 @@ public class AutonomousCharacter : NPC
             }
         }
 
-        this.TotalProcessingTimeText.text = "Process. Time: " + this.GOAPDecisionMaking.TotalProcessingTime.ToString("F");
+        this.TotalProcessingTimeText.text = "Process. Time: " + this.TotalProcessingTime.ToString("F");
         this.BestDiscontentmentText.text = "Best Discontentment: " + this.GOAPDecisionMaking.BestDiscontentmentValue.ToString("F");
-        this.ProcessedActionsText.text = "Act. comb. processed: " + this.GOAPDecisionMaking.TotalActionCombinationsProcessed;
+        this.ProcessedActionsText.text = "Act. comb. processed: " + this.TotalActionCombinationsProcessed;
 
         if (this.GOAPDecisionMaking.BestAction != null)
         {
