@@ -1,19 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Game.NPCs;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
 {
     class PursuitShout : IState
     {
         private Monster agent;
+        public AutonomousCharacter Target { get; set; }
         private Vector3 shoutPosition;
         public Vector3 PatrolPoint1 { get; set; }
         public Vector3 PatrolPoint2 { get; set; }
 
-        public PursuitShout(Monster agent, Vector3 shoutPosition, Vector3 patrolPoint1, Vector3 patrolPoint2)
+        public PursuitShout(Monster agent, AutonomousCharacter target, Vector3 shoutPosition, Vector3 patrolPoint1, Vector3 patrolPoint2)
         {
             this.agent = agent;
+            this.Target = target;
             this.shoutPosition = shoutPosition;
             this.PatrolPoint1 = patrolPoint1;
             this.PatrolPoint2 = patrolPoint2;
@@ -43,6 +46,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
             // Transition back to patrol after reaching the shout point
             return new List<Transition>
             {
+                new ToMeleeCombat(agent,Target),
+                new EnemyDetected(agent, this.PatrolPoint1, this.PatrolPoint2),
                 new ReachedShoutPoint(agent, shoutPosition, this.PatrolPoint1, this.PatrolPoint2)
             };
         }

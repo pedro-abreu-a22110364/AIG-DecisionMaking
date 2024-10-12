@@ -32,7 +32,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
 
             if (agent is Orc)
             {
-                TargetState = new PursuitShout(agent, GameManager.Instance.Character.gameObject.transform.position, patrolPoint1, patrolPoint2);
+                TargetState = new PursuitShout(agent, enemy, GameManager.Instance.Character.gameObject.transform.position, patrolPoint1, patrolPoint2);
             }
             else
             {

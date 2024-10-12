@@ -8,6 +8,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
 {
     class Shout : IAction
     {
+        private AutonomousCharacter enemy;
         private NPC sourceOrc; // The Orc that shouts
         private List<NPC> nearbyOrcs; // The other Orcs that hear the shout
         private Vector3 shoutPosition; // The position from where the shout originates
@@ -21,6 +22,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
             this.shoutPosition = position;
             this.PatrolPoint1 = patrolPoint1;
             this.PatrolPoint2 = patrolPoint2;
+
+            this.enemy = GameManager.Instance.Character;
         }
 
         public void Execute()
@@ -46,7 +49,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
                     Vector3 patrolPoint2 = respondingOrc.pos2; // Access pos2
 
                     // Create the PursuitShout state using the patrol points from the responding orc
-                    var responseState = new PursuitShout(respondingOrc, shoutPosition, patrolPoint1, patrolPoint2);
+                    var responseState = new PursuitShout(respondingOrc, this.enemy, shoutPosition, patrolPoint1, patrolPoint2);
                     respondingOrc.StateMachine.CurrentState = responseState; // Transition to PursuitShout
 
                 }
