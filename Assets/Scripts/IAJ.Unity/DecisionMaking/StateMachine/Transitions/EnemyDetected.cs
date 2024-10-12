@@ -29,8 +29,17 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
 
             this.agent = agent;
             this.enemy = GameManager.Instance.Character;
-            TargetState = new Pursuit(agent, enemy, patrolPoint1, patrolPoint2);
-            Actions = new List<IAction> { new Shout(agent, orcList, agent.transform.position) };
+
+            if (agent is Orc)
+            {
+                TargetState = new PursuitShout(agent, GameManager.Instance.Character.gameObject.transform.position, patrolPoint1, patrolPoint2);
+            }
+            else
+            {
+                TargetState = new Pursuit(agent, enemy, patrolPoint1, patrolPoint2);
+            }
+
+            Actions = new List<IAction> { new Shout(agent, orcList, GameManager.Instance.Character.gameObject.transform.position, patrolPoint1, patrolPoint2) };
 
         }
 

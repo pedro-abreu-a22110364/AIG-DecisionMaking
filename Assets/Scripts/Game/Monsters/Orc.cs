@@ -19,8 +19,8 @@ namespace Assets.Scripts.Game.NPCs
 
         public GameObject AlertSprite;
 
-        protected Vector3 pos1;
-        protected Vector3 pos2;
+        public Vector3 pos1 { get; set; }
+        public Vector3 pos2 { get; set; }
 
         public Orc()
         {
@@ -36,11 +36,13 @@ namespace Assets.Scripts.Game.NPCs
 
         public override void InitializeStateMachine()
         {
-            GetPatrolPositions(out pos1,out pos2);
+            GetPatrolPositions();
 
             //Debug.Log(agent.name + ": Patrol point 1 - " + pos1 + "; Patrol point 2 - " + pos2);
 
             this.StateMachine = new StateMachine(new Patrol(this,pos1,pos2,true));
+
+            //this.StateMachine = new StateMachine(new Sleep(this));
         }
 
         public override void InitializeBehaviourTree()
@@ -50,7 +52,7 @@ namespace Assets.Scripts.Game.NPCs
             this.BehaviourTree = new BasicTree(this, Target);
         }
 
-        private void GetPatrolPositions(out Vector3 position1, out Vector3 position2)
+        public void GetPatrolPositions()
         {
             var patrols = GameObject.FindGameObjectsWithTag("Patrol");
 
@@ -70,8 +72,8 @@ namespace Assets.Scripts.Game.NPCs
 
             }
 
-            position1 = closest.transform.GetChild(0).position;
-            position2 = closest.transform.GetChild(1).position;
+            this.pos1 = closest.transform.GetChild(0).position;
+            this.pos2 = closest.transform.GetChild(1).position;
         }
 
     }
