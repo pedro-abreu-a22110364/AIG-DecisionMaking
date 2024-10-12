@@ -249,14 +249,14 @@ public class AutonomousCharacter : NPC
             else if (this.GOAPActive)
             {
                 // the WorldModel is necessary for the GOAP and MCTS algorithms that need to predict action effects on the world...
-                //var worldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
-                var worldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                var worldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                //var worldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
                 this.GOAPDecisionMaking = new DepthLimitedGOAPDecisionMaking(worldModel, this);
             }
             else if (this.MCTSActive)
             {
-                //var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
-                var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                //var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
                 this.MCTSDecisionMaking = new MCTS(WorldModel, MCTS_MaxIterations, MCTS_MaxIterationsPerFrame, MCTS_NumberPlayouts, MCTS_MaxPlayoutDepth);
             }
             else if (this.MCTSBiasedPlayoutActive)
