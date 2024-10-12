@@ -5,59 +5,49 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
 {
-    // Implementation of a WorldModel using fixed-size arrays (no dictionaries)
     public class FixedArrayWorldModel : WorldModel
     {
-        // Constants for array indices corresponding to specific properties
-        private const int MANA_INDEX = 0;
-        private const int MAXMANA_INDEX = 1;
-        private const int XP_INDEX = 2;
-        private const int MAXHP_INDEX = 3;
-        private const int HP_INDEX = 4;
-        private const int SHIELDHP_INDEX = 5;
-        private const int MAXSHIELDHP_INDEX = 6;
-        private const int MONEY_INDEX = 7;
-        private const int TIME_INDEX = 8;
-        private const int LEVEL_INDEX = 9;
-        private const int POSITION_X_INDEX = 10;
-        private const int POSITION_Y_INDEX = 11;
-        private const int POSITION_Z_INDEX = 12;
-        private const int DURATION_INDEX = 13;
-        private const int PREVIOUSLEVEL_INDEX = 14;
-        private const int PREVIOUSMONEY_INDEX = 15;
+        // Constants for array indices
+        private enum PropertyIndex
+        {
+            MANA = 0, MAXMANA, XP, MAXHP, HP, SHIELDHP, MAXSHIELDHP, MONEY,
+            TIME, LEVEL, POSITION_X, POSITION_Y, POSITION_Z, DURATION, PREVIOUSLEVEL, PREVIOUSMONEY
+        }
 
-        // Array to store all the world properties
+        // Arrays to store world properties, consumables, and enemies
         private object[] properties;
         private bool[] consumables;
         private bool[] enemies;
 
         protected FixedArrayWorldModel Parent { get; set; }
 
-        // Constructor to initialize the World Model
+        // Constructor for the base world model
         public FixedArrayWorldModel(GameManager gameManager, AutonomousCharacter character, List<Action> actions, List<Goal> goals)
         {
-            // Initialize the arrays with a fixed size
             this.properties = new object[16]; // 16 properties to store world state
-            this.consumables = new bool[10]; // Example size for consumables (adjust as needed)
-            this.enemies = new bool[5]; // Example size for enemies (adjust as needed)
+            this.consumables = new bool[10];
+            this.enemies = new bool[5];
 
-            // Set initial properties based on the character's base stats
-            this.properties[MANA_INDEX] = gameManager.Character.baseStats.Mana;
-            this.properties[MAXMANA_INDEX] = gameManager.Character.baseStats.MaxMana;
-            this.properties[XP_INDEX] = gameManager.Character.baseStats.XP;
-            this.properties[MAXHP_INDEX] = gameManager.Character.baseStats.MaxHP;
-            this.properties[HP_INDEX] = gameManager.Character.baseStats.HP;
-            this.properties[SHIELDHP_INDEX] = gameManager.Character.baseStats.ShieldHP;
-            this.properties[MAXSHIELDHP_INDEX] = gameManager.Character.baseStats.MaxShieldHp;
-            this.properties[MONEY_INDEX] = gameManager.Character.baseStats.Money;
-            this.properties[TIME_INDEX] = gameManager.Character.baseStats.Time;
-            this.properties[LEVEL_INDEX] = gameManager.Character.baseStats.Level;
-            this.properties[POSITION_X_INDEX] = gameManager.Character.gameObject.transform.position.x;
-            this.properties[POSITION_Y_INDEX] = gameManager.Character.gameObject.transform.position.y;
-            this.properties[POSITION_Z_INDEX] = gameManager.Character.gameObject.transform.position.z;
-            this.properties[DURATION_INDEX] = 0.0f;
-            this.properties[PREVIOUSLEVEL_INDEX] = 1;
-            this.properties[PREVIOUSMONEY_INDEX] = 0;
+            var baseStats = gameManager.Character.baseStats;
+
+            // Initialize properties from character stats
+            properties[(int)PropertyIndex.MANA] = baseStats.Mana;
+            properties[(int)PropertyIndex.MAXMANA] = baseStats.MaxMana;
+            properties[(int)PropertyIndex.XP] = baseStats.XP;
+            properties[(int)PropertyIndex.MAXHP] = baseStats.MaxHP;
+            properties[(int)PropertyIndex.HP] = baseStats.HP;
+            properties[(int)PropertyIndex.SHIELDHP] = baseStats.ShieldHP;
+            properties[(int)PropertyIndex.MAXSHIELDHP] = baseStats.MaxShieldHp;
+            properties[(int)PropertyIndex.MONEY] = baseStats.Money;
+            properties[(int)PropertyIndex.TIME] = baseStats.Time;
+            properties[(int)PropertyIndex.LEVEL] = baseStats.Level;
+            Vector3 pos = character.gameObject.transform.position;
+            properties[(int)PropertyIndex.POSITION_X] = pos.x;
+            properties[(int)PropertyIndex.POSITION_Y] = pos.y;
+            properties[(int)PropertyIndex.POSITION_Z] = pos.z;
+            properties[(int)PropertyIndex.DURATION] = 0.0f;
+            properties[(int)PropertyIndex.PREVIOUSLEVEL] = 1;
+            properties[(int)PropertyIndex.PREVIOUSMONEY] = 0;
 
             this.GameManager = gameManager;
             this.Character = character;
@@ -67,233 +57,196 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             this.NextPlayer = 0;
         }
 
-        // Constructor to create a child world model based on the parent world model
+        // Constructor for a child world model
         public FixedArrayWorldModel(FixedArrayWorldModel parent)
         {
-            // Initialize the arrays
-            this.properties = new object[16]; // 16 properties for the world state
-            this.consumables = new bool[10]; // Example size for consumables
-            this.enemies = new bool[5]; // Example size for enemies
+            this.properties = new object[16];
+            this.consumables = new bool[10];
+            this.enemies = new bool[5];
 
-            // Copy over the properties from the parent
-            for (int i = 0; i < this.properties.Length; i++)
-            {
-                this.properties[i] = parent.properties[i]; // Copy property values
-            }
+            // Use Array.Copy for efficient copying
+            System.Array.Copy(parent.properties, this.properties, 16);
+            System.Array.Copy(parent.consumables, this.consumables, 10);
+            System.Array.Copy(parent.enemies, this.enemies, 5);
 
-            // Copy over the consumables state from the parent
-            for (int i = 0; i < this.consumables.Length; i++)
-            {
-                this.consumables[i] = parent.consumables[i]; // Copy consumable state
-            }
-
-            // Copy over the enemies state from the parent
-            for (int i = 0; i < this.enemies.Length; i++)
-            {
-                this.enemies[i] = parent.enemies[i]; // Copy enemies state
-            }
-
-            // Set the character, actions, and game manager to be the same as the parent's
             this.GameManager = parent.GameManager;
             this.Character = parent.Character;
-
-            // Copy the actions list and shuffle it
-            this.Actions = new List<Action>(parent.Actions); // Copy actions from the parent
-            this.Actions.Shuffle(); // Shuffle actions (to ensure randomness)
+            this.Actions = new List<Action>(parent.Actions);
+            this.Actions.Shuffle();
             this.ActionEnumerator = this.Actions.GetEnumerator();
 
             this.Parent = parent;
-
-            // Default NextPlayer setup
             this.NextPlayer = 0;
         }
 
-
-        // Generate a child world model based on the current world state
         public override WorldModel GenerateChildWorldModel()
         {
-            return new FixedArrayWorldModel(this.GameManager, this.Character, this.Actions, new List<Goal>());
+            return new FixedArrayWorldModel(this);
         }
 
-        // Get a property from the array based on the property name
+        // Refactored GetProperty with array access
         public override object GetProperty(string propertyName)
         {
             switch (propertyName)
             {
                 case PropertiesName.MANA:
-                    return this.GameManager.Character.baseStats.Mana;
+                    return properties[(int)PropertyIndex.MANA];
                 case PropertiesName.MAXMANA:
-                    return this.GameManager.Character.baseStats.MaxMana;
+                    return properties[(int)PropertyIndex.MAXMANA];
                 case PropertiesName.XP:
-                    return this.GameManager.Character.baseStats.XP;
+                    return properties[(int)PropertyIndex.XP];
                 case PropertiesName.MAXHP:
-                    return this.GameManager.Character.baseStats.MaxHP;
+                    return properties[(int)PropertyIndex.MAXHP];
                 case PropertiesName.HP:
-                    return this.GameManager.Character.baseStats.HP;
+                    return properties[(int)PropertyIndex.HP];
                 case PropertiesName.ShieldHP:
-                    return this.GameManager.Character.baseStats.ShieldHP;
+                    return properties[(int)PropertyIndex.SHIELDHP];
                 case PropertiesName.MaxShieldHP:
-                    return this.GameManager.Character.baseStats.MaxShieldHp;
+                    return properties[(int)PropertyIndex.MAXSHIELDHP];
                 case PropertiesName.MONEY:
-                    return this.GameManager.Character.baseStats.Money;
+                    return properties[(int)PropertyIndex.MONEY];
                 case PropertiesName.TIME:
-                    return this.GameManager.Character.baseStats.Time;
+                    return properties[(int)PropertyIndex.TIME];
                 case PropertiesName.LEVEL:
-                    return this.GameManager.Character.baseStats.Level;
+                    return properties[(int)PropertyIndex.LEVEL];
                 case PropertiesName.POSITION:
-                    return this.GameManager.Character.gameObject.transform.position;
+                    return new Vector3(
+                        (float)properties[(int)PropertyIndex.POSITION_X],
+                        (float)properties[(int)PropertyIndex.POSITION_Y],
+                        (float)properties[(int)PropertyIndex.POSITION_Z]);
                 case PropertiesName.DURATION:
-                    return 0.0f;
-                case PropertiesName.PreviousLEVEL:
-                    return 1;
-                case PropertiesName.PreviousMONEY:
-                    return 0;
+                    return properties[(int)PropertyIndex.DURATION];
                 default:
-                    return this.GameManager.disposableObjects.ContainsKey(propertyName); // Could also handle consumables and enemies if needed
+                    return this.GameManager.disposableObjects.ContainsKey(propertyName);
             }
         }
 
-        // Set a property in the array
+        // Refactored SetProperty with direct array access
         public override void SetProperty(string propertyName, object value)
         {
             switch (propertyName)
             {
                 case PropertiesName.MANA:
-                    properties[MANA_INDEX] = value;
+                    properties[(int)PropertyIndex.MANA] = value;
                     break;
                 case PropertiesName.MAXMANA:
-                    properties[MAXMANA_INDEX] = value;
+                    properties[(int)PropertyIndex.MAXMANA] = value;
                     break;
                 case PropertiesName.XP:
-                    properties[XP_INDEX] = value;
+                    properties[(int)PropertyIndex.XP] = value;
                     break;
                 case PropertiesName.MAXHP:
-                    properties[MAXHP_INDEX] = value;
+                    properties[(int)PropertyIndex.MAXHP] = value;
                     break;
                 case PropertiesName.HP:
-                    properties[HP_INDEX] = value;
+                    properties[(int)PropertyIndex.HP] = value;
                     break;
                 case PropertiesName.ShieldHP:
-                    properties[SHIELDHP_INDEX] = value;
+                    properties[(int)PropertyIndex.SHIELDHP] = value;
                     break;
                 case PropertiesName.MaxShieldHP:
-                    properties[MAXSHIELDHP_INDEX] = value;
+                    properties[(int)PropertyIndex.MAXSHIELDHP] = value;
                     break;
                 case PropertiesName.MONEY:
-                    properties[MONEY_INDEX] = value;
+                    properties[(int)PropertyIndex.MONEY] = value;
                     break;
                 case PropertiesName.TIME:
-                    properties[TIME_INDEX] = value;
+                    properties[(int)PropertyIndex.TIME] = value;
                     break;
                 case PropertiesName.LEVEL:
-                    properties[LEVEL_INDEX] = value;
+                    properties[(int)PropertyIndex.LEVEL] = value;
                     break;
                 case PropertiesName.POSITION:
-                    Vector3 position = (Vector3)value;
-                    properties[POSITION_X_INDEX] = position.x;
-                    properties[POSITION_Y_INDEX] = position.y;
-                    properties[POSITION_Z_INDEX] = position.z;
+                    Vector3 pos = (Vector3)value;
+                    properties[(int)PropertyIndex.POSITION_X] = pos.x;
+                    properties[(int)PropertyIndex.POSITION_Y] = pos.y;
+                    properties[(int)PropertyIndex.POSITION_Z] = pos.z;
                     break;
                 case PropertiesName.DURATION:
-                    properties[DURATION_INDEX] = value;
-                    break;
-                case PropertiesName.PreviousLEVEL:
-                    properties[PREVIOUSLEVEL_INDEX] = value;
-                    break;
-                case PropertiesName.PreviousMONEY:
-                    properties[PREVIOUSMONEY_INDEX] = value;
+                    properties[(int)PropertyIndex.DURATION] = value;
                     break;
             }
         }
 
         public override float GetGoalValue(string goalName)
         {
-            //recursive implementation of WorldModel
-            if (this.GoalValues.ContainsKey(goalName))
+            FixedArrayWorldModel current = this;
+
+            // Traverse up the parent hierarchy until we find the goal value or reach the root
+            while (current != null)
             {
-                return this.GoalValues[goalName];
+                if (current.GoalValues.ContainsKey(goalName))
+                {
+                    return current.GoalValues[goalName];
+                }
+                current = current.Parent;
             }
-            else if (this.Parent != null)
-            {
-                return this.Parent.GetGoalValue(goalName);
-            }
-            else  //we are at the base WorldModel, that corresponds to the charactr's perceptions
-            {
-                return this.GoalValues[goalName];
-            }
+
+            // If the goal is not found, return a default value (e.g., 0) or handle it appropriately
+            return 0.0f; // Or throw an exception if a goal must always exist
         }
 
         public override void SetGoalValue(string goalName, float value)
         {
+            // Ensure GoalValues is initialized before setting the value
+            if (this.GoalValues == null)
+            {
+                this.GoalValues = new Dictionary<string, float>();
+            }
+
             this.GoalValues[goalName] = value;
         }
 
-
-        // Check if the world state is terminal
+        // Optimized terminal check
         public override bool IsTerminal()
         {
-            return (int)properties[HP_INDEX] <= 0 || (float)properties[TIME_INDEX] >= GameManager.GameConstants.TIME_LIMIT || (NextPlayer == 0 && (int)properties[MONEY_INDEX] == 25);
+            int hp = (int)properties[(int)PropertyIndex.HP];
+            float time = (float)properties[(int)PropertyIndex.TIME];
+            int money = (int)properties[(int)PropertyIndex.MONEY];
+
+            return hp <= 0 || time >= GameManager.GameConstants.TIME_LIMIT || (NextPlayer == 0 && money == 25);
         }
 
-        // Calculate the score based on the current world state
+        // Optimized GetScore method
         public override float GetScore()
         {
-            int money = (int)properties[MONEY_INDEX];
-            int HP = (int)properties[HP_INDEX];
-            float time = (float)properties[TIME_INDEX];
+            int money = (int)properties[(int)PropertyIndex.MONEY];
+            int hp = (int)properties[(int)PropertyIndex.HP];
+            float time = (float)properties[(int)PropertyIndex.TIME];
 
-            if (HP <= 0 || time >= GameManager.GameConstants.TIME_LIMIT) // Lose
-                return 0.0f;
-            else if (NextPlayer == 0 && money == 25 && HP > 0) // Win
-                return 1.0f;
-            else // Non-terminal state
-            {
-                return timeAndMoneyScore(time, money) * levelScore() * hpScore(HP) * timeScore(time);
-            }
+            if (hp <= 0 || time >= GameManager.GameConstants.TIME_LIMIT) return 0.0f;
+            if (NextPlayer == 0 && money == 25 && hp > 0) return 1.0f;
+
+            return timeAndMoneyScore(time, money) * levelScore() * hpScore(hp) * timeScore(time);
         }
 
-        // Helper method to calculate time and money score
-        private float timeAndMoneyScore(float time, int money)
+        // Helper methods (unchanged logic)
+        private float timeAndMoneyScore(float time, int money) => (time - 6 * money) switch
         {
-            float relationTimeMoney = time - 6 * money;
+            > 30 => 0f,
+            < 0 => 0.6f,
+            _ => 0.3f,
+        };
 
-            if (relationTimeMoney > 30)
-                return 0;
-            else if (relationTimeMoney < 0)
-                return 0.6f;
-            else
-                return 0.3f;
-        }
+        private float timeScore(float time) => 1 - time / GameManager.GameConstants.TIME_LIMIT;
 
-        // Helper method for time score
-        private float timeScore(float time)
-        {
-            return (1 - time / GameManager.GameConstants.TIME_LIMIT);
-        }
-
-        // Helper method for level score
         private float levelScore()
         {
             int level = (int)this.GetProperty(PropertiesName.LEVEL);
-            if (level == 2)
-                return 1f;
-            else if (level == 1)
-                return 0.4f;
-            else
-                return 0;
+            return level switch
+            {
+                2 => 1f,
+                1 => 0.4f,
+                _ => 0f,
+            };
         }
 
-        private float hpScore(int hp)
+        private float hpScore(int hp) => hp switch
         {
-            if (hp > 18) //survives orc and dragon
-                return 1f;
-            if (hp > 12) //survives dragon or two orcs
-                return 0.6f;
-            else if (hp > 6) //survives orc
-                return 0.1f;
-            else
-                return 0.01f;
-
-        }
+            > 18 => 1f,
+            > 12 => 0.6f,
+            > 6 => 0.1f,
+            _ => 0.01f,
+        };
     }
 }
