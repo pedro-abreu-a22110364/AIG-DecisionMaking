@@ -15,7 +15,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
         protected override float Playout(WorldModel initialStateForPlayout)
         {
             int depth = 0;
-            WorldModel currentState = initialStateForPlayout;
+            var currentState = initialStateForPlayout.GenerateChildWorldModel();
 
             while (!currentState.IsTerminal() && depth < this.PlayoutDepthLimit)
             {

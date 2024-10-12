@@ -155,8 +155,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return null;
         }
 
-        //normal MCTS playout
-
+        //Normal MCTS playout
         protected virtual float Playout(WorldModel initialStateForPlayout)
         {
             int depth = 0;
@@ -175,8 +174,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return currentState.GetScore();
         } 
 
-        //limited MCTS playout
-
+        //Secret Level 2 - Limited Playout MCTS
         /*protected virtual float Playout(WorldModel initialStateForPlayout)
         {
             int depth = 0;
