@@ -592,6 +592,7 @@ public class AutonomousCharacter : NPC
         if (mCTS.InProgress)
         {
             var action = mCTS.ChooseAction();
+            this.TotalProcessingTime += mCTS.TotalProcessingTime;
             if (action != null)
             {
                 this.CurrentAction = action;
@@ -599,7 +600,7 @@ public class AutonomousCharacter : NPC
             }
         }
         //Statistical and Debug Data
-        this.TotalProcessingTimeText.text = "Process. Time: " + mCTS.TotalProcessingTime.ToString("F");
+        this.TotalProcessingTimeText.text = "Process. Time: " + TotalProcessingTime.ToString("F");
 
         this.ProcessedActionsText.text = "Iterations: "
             + mCTS.CurrentIterations.ToString()
