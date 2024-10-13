@@ -99,8 +99,22 @@ public class GameManager : MonoBehaviour
 
         this.initialPosition = this.Character.gameObject.transform.position;
 
-        if (formationSettings != FormationSettings.NoFormations)
-            foreach (FormationManager formation in Formations) { if (formation != null) SetupOrcFormation(formation.Pattern); }
+        // Initialize Formations List if not already
+        if (this.Formations == null)
+        {
+            this.Formations = new List<FormationManager>();
+        }
+
+        // Only set up formations if formations are enabled
+        if (formationSettings == FormationSettings.LineFormation)
+        {
+            SetupOrcFormation(new LineFormation());
+        }
+        else if (formationSettings == FormationSettings.TriangleFormation)
+        {
+            SetupOrcFormation(new TriangleFormation());
+        }
+
     }
 
     private void SetupOrcFormation(FormationPattern formationPattern)
@@ -118,11 +132,11 @@ public class GameManager : MonoBehaviour
 
         // Create a list of the orcs
         List<Monster> orcMonsters = new List<Monster>
-    {
-        orc3.GetComponent<Monster>(),
-        orc4.GetComponent<Monster>(),
-        orc5.GetComponent<Monster>()
-    };
+        {
+            orc3.GetComponent<Monster>(),
+            orc4.GetComponent<Monster>(),
+            orc5.GetComponent<Monster>()
+        };
 
         // Define an anchor position for the formation (you can adjust this)
         Vector3 anchorPosition = new Vector3(-26.7f, 0, -33.8f);  // Set to the center where you want the formation
@@ -200,8 +214,16 @@ public class GameManager : MonoBehaviour
                 this.Character.baseStats.Time += GameConstants.UPDATE_INTERVAL;
             }
 
-            if (formationSettings != FormationSettings.NoFormations) 
-                foreach (FormationManager formation in Formations) { formation.UpdateSlots(); }
+            if (formationSettings != FormationSettings.NoFormations && Formations != null)
+            {
+                foreach (FormationManager formation in Formations)
+                {
+                    if (formation != null)
+                    {
+                        formation.UpdateSlots();
+                    }
+                }
+            }
 
             this.HPText.text = "HP: " + this.Character.baseStats.HP;
             this.XPText.text = "XP: " + this.Character.baseStats.XP;
@@ -226,14 +248,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RemoveOrcFromFormation(Monster enemy)
+    public void RemoveOrcFromFormation(Monster orc)
     {
-        if (formationSettings != FormationSettings.NoFormations)
+        if (Formations == null || Formations.Count == 0)
+            return;
+
+        foreach (FormationManager formation in Formations)
         {
-            foreach (FormationManager formation in Formations)
-                formation.SlotAssignment.Remove(enemy);
+            if (formation != null && formation.SlotAssignment.ContainsKey(orc))
+            {
+                formation.RemoveCharacter(orc);
+                Debug.Log($"{orc.gameObject.name} has been removed from formation.");
+            }
         }
     }
+
 
     public void BreakFormations()
     {
@@ -267,10 +296,16 @@ public class GameManager : MonoBehaviour
 
                 if (attackRoll >= enemyData.AC)
                 {
-                    //there was an hit, enemy is destroyed, gain xp
+                    //there was an hit, enemy is destroyed, gain 
                     
                     this.enemies.Remove(enemy);
                     this.disposableObjects.Remove(enemy.name);
+
+                    if (monster is Orc)
+                    {
+                        RemoveOrcFromFormation(monster);
+                    }
+
                     enemy.SetActive(false);
                 }
             }
@@ -279,6 +314,12 @@ public class GameManager : MonoBehaviour
                 damage = enemyData.SimpleDamage;
                 this.enemies.Remove(enemy);
                 this.disposableObjects.Remove(enemy.name);
+
+                if (monster is Orc)
+                {
+                    RemoveOrcFromFormation(monster);
+                }
+
                 enemy.SetActive(false);
             }
 
@@ -320,19 +361,29 @@ public class GameManager : MonoBehaviour
 
                     if (attackRoll >= monster.stats.AC)
                     {
-                        //there was an hit, enemy is destroyed, gain xp
-                        RemoveOrcFromFormation(monster);
+                        //there was an hit, enemy is destroyed, gain 
                         this.enemies.Remove(enemy);
                         this.disposableObjects.Remove(enemy.name);
+
+                        if (monster is Orc)
+                        {
+                            RemoveOrcFromFormation(monster);
+                        }
+
                         enemy.SetActive(false);
                     }
                 }
                 else
                 {
                     damage = monster.stats.SimpleDamage;
-                    RemoveOrcFromFormation(monster);
                     this.enemies.Remove(enemy);
                     this.disposableObjects.Remove(enemy.name);
+
+                    if (monster is Orc)
+                    {
+                        RemoveOrcFromFormation(monster);
+                    }
+
                     enemy.SetActive(false);
                 }
 

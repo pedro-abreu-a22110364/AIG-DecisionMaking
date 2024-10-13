@@ -12,6 +12,8 @@ namespace Assets.Scripts.IAJ.Unity.Formations
     {
         public Dictionary<Monster, int> SlotAssignment;
 
+        public List<Monster> Monsters;
+
         public FormationPattern Pattern;
 
         // # A Static (i.e., position and orientation) representing the
@@ -25,6 +27,7 @@ namespace Assets.Scripts.IAJ.Unity.Formations
         public FormationManager(List<Monster> Monsters, FormationPattern pattern, Vector3 position, Vector3 orientation)
         {
             this.SlotAssignment = new Dictionary<Monster, int>();
+            this.Monsters = Monsters;
             this.Pattern = pattern;
             this.AnchorPosition = position;
             this.Orientation = orientation;
