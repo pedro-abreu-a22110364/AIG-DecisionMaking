@@ -6,8 +6,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 {
     public class LayOnHands : Action
     {
-        private const int MANA_COST = 7; // Mana cost for lay on hands
-        private const int LEVEL = 2; //Level needed to lay on hands
+        private const int MANA_COST = 7;
+        private const int LEVEL = 2;
 
         public LayOnHands(AutonomousCharacter character) : base("LayOnHands", character) { }
 
@@ -39,7 +39,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 
         public override void Execute()
         {
-            // Execute Lay On Hands by spending Mana and restoring HP
             GameManager.Instance.LayOnHands();
             Debug.Log("Lay On Hands executed: Full HP restored.");
         }
@@ -48,9 +47,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         {
             base.ApplyActionEffects(worldModel);
 
-            worldModel.SetProperty(PropertiesName.HP, Character.baseStats.MaxHP); // Restores HP
+            worldModel.SetProperty(PropertiesName.HP, Character.baseStats.MaxHP);
 
-            // Deduct mana cost from the character
             var currentMana = (int)worldModel.GetProperty(PropertiesName.MANA);
             worldModel.SetProperty(PropertiesName.MANA, currentMana - MANA_COST); // Deduct 5 mana
         }
@@ -58,14 +56,12 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         public override float GetGoalChange(Goal goal)
         {
             var change = base.GetGoalChange(goal);
-            // You can add logic here if you want to adjust goal changes based on shield effects
 
             return change;
         }
 
         public override float GetDuration()
         {
-            // Assuming this action takes a specific amount of time in-game (e.g., 2 seconds)
             return 2.0f;
         }
         public override float GetHValue(WorldModel worldModel)

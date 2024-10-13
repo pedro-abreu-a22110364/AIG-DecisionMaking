@@ -8,7 +8,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
 {
     public class FixedArrayWorldModel : WorldModel
     {
-        // Constants for array indices
         private enum PropertyIndex
         {
             MANA = 0, MAXMANA, XP, MAXHP, HP, SHIELDHP, MAXSHIELDHP, MONEY,
@@ -20,7 +19,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             SURVIVE_GOAL = 0, GAIN_LEVEL_GOAL, BE_QUICK_GOAL, GET_RICH_GOAL
         }
 
-        // Arrays to store world properties, consumables, and enemies
         private object[] properties;
         private bool[] consumables;
         private bool[] enemies;
@@ -28,17 +26,15 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
 
         protected FixedArrayWorldModel Parent { get; set; }
 
-        // Constructor for the base world model
         public FixedArrayWorldModel(GameManager gameManager, AutonomousCharacter character, List<Action> actions, List<Goal> goals)
         {
-            this.properties = new object[16]; // 16 properties to store world state
+            this.properties = new object[16];
             this.consumables = new bool[10];
             this.enemies = new bool[5];
             this.goalValues = new float[4];
 
             var baseStats = gameManager.Character.baseStats;
 
-            // Initialize properties from character stats
             properties[(int)PropertyIndex.MANA] = baseStats.Mana;
             properties[(int)PropertyIndex.MAXMANA] = baseStats.MaxMana;
             properties[(int)PropertyIndex.XP] = baseStats.XP;
@@ -57,7 +53,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             properties[(int)PropertyIndex.PREVIOUSLEVEL] = 1;
             properties[(int)PropertyIndex.PREVIOUSMONEY] = 0;
 
-            // Initialize goals array from goals list
             foreach (Goal goal in goals)
             {
                 if (goal.Name == "Survive")
@@ -78,7 +73,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             this.NextPlayer = 0;
         }
 
-        // Constructor for a child world model
         public FixedArrayWorldModel(FixedArrayWorldModel parent)
         {
             this.properties = new object[16];
@@ -86,7 +80,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             this.enemies = new bool[5];
             this.goalValues = new float[4];
 
-            // Use Array.Copy for efficient copying
             System.Array.Copy(parent.properties, this.properties, 16);
             System.Array.Copy(parent.consumables, this.consumables, 10);
             System.Array.Copy(parent.enemies, this.enemies, 5);
@@ -107,7 +100,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             return new FixedArrayWorldModel(this);
         }
 
-        // Refactored GetProperty with array access
         public override object GetProperty(string propertyName)
         {
             switch (propertyName)
@@ -148,7 +140,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             }
         }
 
-        // Refactored SetProperty with direct array access
         public override void SetProperty(string propertyName, object value)
         {
             switch (propertyName)
@@ -213,7 +204,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             FixedArrayWorldModel current = this;
             int goalIndex = GetGoalArrayIndex(goalName);
 
-            // Traverse up the parent hierarchy until we find the goal value or reach the root
             while (current != null)
             {
                 if (goalIndex != -1)
@@ -223,13 +213,12 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
                 current = current.Parent;
             }
 
-            // If the goal is not found, return a default value (e.g., 0) or handle it appropriately
-            return 0.0f; // Or throw an exception if a goal must always exist
+            // If the goal is not found, return a default value
+            return 0.0f;
         }
 
         public override void SetGoalValue(string goalName, float value)
         {
-            // Ensure GoalValues is initialized before setting the value
             if (this.goalValues == null)
             {
                 this.goalValues = new float[4];
@@ -240,7 +229,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             this.goalValues[goalIndex] = value;
         }
 
-        // Optimized terminal check
         public override bool IsTerminal()
         {
             int hp = (int)properties[(int)PropertyIndex.HP];
@@ -250,7 +238,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             return hp <= 0 || time >= GameManager.GameConstants.TIME_LIMIT || (NextPlayer == 0 && money == 25);
         }
 
-        // Optimized GetScore method
         public override float GetScore()
         {
             int money = (int)properties[(int)PropertyIndex.MONEY];
@@ -263,7 +250,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.ForwardModel
             return timeAndMoneyScore(time, money) * levelScore() * hpScore(hp) * timeScore(time);
         }
 
-        // Helper methods (unchanged logic)
         private float timeAndMoneyScore(float time, int money) => (time - 6 * money) switch
         {
             > 30 => 0f,

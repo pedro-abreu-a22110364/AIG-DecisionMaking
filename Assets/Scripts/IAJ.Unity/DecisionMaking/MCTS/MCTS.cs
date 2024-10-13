@@ -9,7 +9,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
 {
     public class MCTS
     {
-        public const float C = 1.4f; // Exploration constant
+        public const float C = 1.4f;
         public bool InProgress { get; private set; }
         protected int MaxIterations { get; set; }
         protected int MaxIterationsPerFrame { get; set; }
@@ -25,7 +25,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
         protected MCTSNode InitialNode { get; set; }
         protected System.Random RandomGenerator { get; set; }
 
-        // Information and Debug Properties
+
         public int MaxPlayoutDepthReached { get; set; }
         public int MaxSelectionDepthReached { get; set; }
         public float TotalProcessingTime { get; set; }
@@ -50,7 +50,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             this.FrameCurrentIterations = 0;
             this.TotalProcessingTime = 0.0f;
 
-            // Create root node n0 for state s0
             this.InitialNode = new MCTSNode(this.InitialState)
             {
                 Action = null,
@@ -68,7 +67,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
 
             var startTime = Time.realtimeSinceStartup;
 
-            // Main MCTS Loop
             while (this.CurrentIterations < this.MaxIterations)
             {
                 selectedNode = this.Selection(this.InitialNode); // Selection + Expansion
@@ -92,7 +90,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return this.BestAction(this.InitialNode);            // Return the best action
         }
 
-        // Selection and Expansion
         protected MCTSNode Selection(MCTSNode initialNode)
         {
             MCTSNode currentNode = initialNode;
@@ -116,7 +113,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             var executableActions = parent.State.GetExecutableActions();
             var untriedActions = new List<Action>();
 
-            // Find untried actions
             foreach (var action in executableActions)
             {
                 bool alreadyTried = false;
@@ -145,7 +141,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
                 {
                     Parent = parent,
                     Action = randomAction,
-                    PlayerID = 1 - parent.PlayerID // Alternate between players
+                    PlayerID = 1 - parent.PlayerID
                 };
 
                 parent.ChildNodes.Add(newNode);
@@ -155,7 +151,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return null;
         }
 
-        //Normal MCTS playout
         protected virtual float Playout(WorldModel initialStateForPlayout)
         {
             int depth = 0;
@@ -174,55 +169,15 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return currentState.GetScore();
         }
 
-        //Secret Level 2 - Limited Playout MCTS
-        /* protected virtual float Playout(WorldModel initialStateForPlayout)
-        {
-            int depth = 0;
-            var currentState = initialStateForPlayout.GenerateChildWorldModel();
-
-            while (!currentState.IsTerminal() && depth < 50)
-            {
-                var executableActions = currentState.GetExecutableActions();
-                if (executableActions.Length == 0) break;
-
-                var randomAction = executableActions[this.RandomGenerator.Next(executableActions.Length)];
-                randomAction.ApplyActionEffects(currentState);
-
-                depth++;
-            }
-
-            if (!currentState.IsTerminal())
-            {
-                return this.HeuristicEvaluation(currentState);
-            }
-
-            return currentState.GetScore();
-        }
-
-        protected virtual float HeuristicEvaluation(WorldModel state)
-        {
-            float playerMoney = (int)state.GetProperty(PropertiesName.MONEY); 
-            float playerLevel = (int)state.GetProperty(PropertiesName.LEVEL);
-
-            float heuristicScore = playerMoney * 0.5f
-                                  + playerLevel * 1.0f;
-
-            // Return the heuristic score
-            return heuristicScore;
-        } */
-
-
-
         protected virtual float PlayoutStochastic(WorldModel initialStateForPlayout)
         {
             float bestReward = float.MinValue;
 
             for (int i = 0; i < this.NumberPlayouts; i++)
             {
-                WorldModel currentState = initialStateForPlayout.GenerateChildWorldModel(); // Clone the state for each playout
+                WorldModel currentState = initialStateForPlayout.GenerateChildWorldModel();
                 int depth = 0;
 
-                // Perform a single playout simulation until terminal state or depth limit
                 while (!currentState.IsTerminal() && depth < this.PlayoutDepthLimit)
                 {
                     var executableActions = currentState.GetExecutableActions();
@@ -244,7 +199,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
                 }
             }
 
-            // Return the best reward among all playouts
             return bestReward;
         }
 
@@ -288,7 +242,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return bestChild;
         }
 
-        // Final action selection strategy: Max Child (highest average reward)
         protected MCTSNode BestChild(MCTSNode node)
         {
             MCTSNode bestChild = null;
@@ -307,7 +260,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             return bestChild;
         }
 
-        // Returns the best action based on the final chosen strategy
         protected Action BestAction(MCTSNode node)
         {
             var bestChild = this.BestChild(node);
@@ -315,7 +267,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
 
             this.BestFirstChild = bestChild;
 
-            // For debugging purposes
             this.BestSequence = new List<MCTSNode> { bestChild };
             node = bestChild;
             this.BestActionSequenceEndState = node.State;

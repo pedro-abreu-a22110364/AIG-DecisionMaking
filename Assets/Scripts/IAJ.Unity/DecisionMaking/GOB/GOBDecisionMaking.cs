@@ -19,7 +19,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
         public HeroActions.Action secondBestAction { get; private set; }
         public HeroActions.Action thirdBestAction { get; private set; }
 
-        // Utility based GOB
         public GOBDecisionMaking(List<HeroActions.Action> _actions, List<Goal> goals)
         {
             this.actions = _actions;
@@ -27,10 +26,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
             this.ActionDiscontentment = new Dictionary<HeroActions.Action, float>();
         }
 
-        // Predicting the Discontentment after executing the action
         public static float CalculateDiscontentment(HeroActions.Action action, List<Goal> goals, AutonomousCharacter character)
         {
-            // Keep a running total
             var discontentment = 0.0f;
             var duration = action.GetDuration();
 
@@ -53,7 +50,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
         {
             var startTime = Time.realtimeSinceStartup;
 
-            // Find the action leading to the lowest discontentment
             InProgress = true;
             HeroActions.Action bestAction = null;
             float bestValue = float.PositiveInfinity;
@@ -68,7 +64,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.GOB
                 {
                     // Calculate discontentment for the current action
                     value = CalculateDiscontentment(action, goals, character);
-                    ActionDiscontentment[action] = value; // Store it for later use (e.g., debugging)
+                    ActionDiscontentment[action] = value;
 
                     // Find the best, second-best, and third-best actions
                     if (value < bestValue)

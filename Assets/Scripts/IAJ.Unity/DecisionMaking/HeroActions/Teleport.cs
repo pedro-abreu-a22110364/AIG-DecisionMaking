@@ -6,14 +6,13 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 {
     public class Teleport : Action
     {
-        private const int MANA_COST = 5; // Mana cost for teleport
-        private const int LEVEL = 2; //Level needed to teleport
+        private const int MANA_COST = 5;
+        private const int LEVEL = 2;
 
         public Teleport(AutonomousCharacter character) : base("Teleport", character) { }
 
         public override bool CanExecute()
         {
-            // Check if Sir Uthgard has enough Mana to teleport
             return Character.baseStats.Mana >= MANA_COST && Character.baseStats.Level >= LEVEL;
         }
 
@@ -23,7 +22,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 
             var currentMana = (int)worldModel.GetProperty(PropertiesName.MANA);
 
-            return currentMana >= MANA_COST && currentLevel >= LEVEL; // Execute only if enough mana is available
+            return currentMana >= MANA_COST && currentLevel >= LEVEL;
         }
 
         public override void Execute()
@@ -37,7 +36,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         {
             base.ApplyActionEffects(worldModel);
 
-            // Deduct mana cost from the character
             var currentMana = (int)worldModel.GetProperty(PropertiesName.MANA);
             worldModel.SetProperty(PropertiesName.MANA, currentMana - MANA_COST); // Deduct 5 mana
 
@@ -48,7 +46,6 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
         public override float GetGoalChange(Goal goal)
         {
             var change = base.GetGoalChange(goal);
-            // You can add logic here if you want to adjust goal changes based on shield effects
 
             return change;
         }
@@ -60,7 +57,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 
         public override float GetHValue(WorldModel worldModel)
         {
-            return -10; //ToDo if the character is far from the objetive this should be prioritize
+            return -10;
         }
     }
 }

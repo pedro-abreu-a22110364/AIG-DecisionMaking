@@ -45,8 +45,8 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
                     respondingOrc.GetPatrolPositions();
 
                     // Access the patrol points from the responding orc
-                    Vector3 patrolPoint1 = respondingOrc.pos1; // Access pos1
-                    Vector3 patrolPoint2 = respondingOrc.pos2; // Access pos2
+                    Vector3 patrolPoint1 = respondingOrc.pos1; 
+                    Vector3 patrolPoint2 = respondingOrc.pos2;
 
                     // Create the PursuitShout state using the patrol points from the responding orc
                     var responseState = new PursuitShout(respondingOrc, this.enemy, shoutPosition, patrolPoint1, patrolPoint2);

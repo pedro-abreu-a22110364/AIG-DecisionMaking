@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
         public const int PICKUP_RANGE = 8;
 
     }
-    //public fields, seen by Unity in Editor
 
     public AutonomousCharacter Character { get; set; }
 
@@ -60,7 +59,6 @@ public class GameManager : MonoBehaviour
     public bool StochasticWorld = false;
 
 
-    //fields
     public List<GameObject> chests { get; set; }
     public List<GameObject> skeletons { get; set; }
     public List<GameObject> orcs { get; set; }
@@ -119,7 +117,6 @@ public class GameManager : MonoBehaviour
 
     private void SetupOrcFormation(FormationPattern formationPattern)
     {
-        // Find Orcs 3, 4, and 5 in the scene (assuming they are named "Orc3", "Orc4", "Orc5")
         GameObject orc3 = GameObject.Find("Orc3");
         GameObject orc4 = GameObject.Find("Orc4");
         GameObject orc5 = GameObject.Find("Orc5");
@@ -130,7 +127,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Create a list of the orcs
         List<Monster> orcMonsters = new List<Monster>
         {
             orc3.GetComponent<Monster>(),
@@ -138,16 +134,13 @@ public class GameManager : MonoBehaviour
             orc5.GetComponent<Monster>()
         };
 
-        // Define an anchor position for the formation (you can adjust this)
-        Vector3 anchorPosition = new Vector3(-26.7f, 0, -33.8f);  // Set to the center where you want the formation
-        Vector3 orientation = Vector3.forward;  // Set the direction in which the formation faces
+        Vector3 anchorPosition = new Vector3(-26.7f, 0, -33.8f); //this is the approximate position of the new orcs
+        Vector3 orientation = Vector3.forward;
         orcMonsters[2].SetFormationLeader();
 
-        // Create the FormationManager with the selected formation type
         FormationManager formationManager = new FormationManager(orcMonsters, formationPattern, anchorPosition, orientation);
         this.Formations.Add(formationManager);
 
-        // Update the positions of the orcs based on the selected formation
         formationManager.UpdateSlots();
 
         Debug.Log("Orc formation has been set up using " + formationPattern.GetType().Name + ".");

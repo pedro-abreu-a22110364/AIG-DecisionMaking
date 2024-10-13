@@ -16,9 +16,6 @@ namespace Assets.Scripts.IAJ.Unity.Formations
 
         public FormationPattern Pattern;
 
-        // # A Static (i.e., position and orientation) representing the
-        // # drift offset for the currently filled slots.
-
         public Vector3 AnchorPosition;
 
         public Vector3 Orientation;
@@ -110,10 +107,8 @@ namespace Assets.Scripts.IAJ.Unity.Formations
                 if (SlotAssignment[npc] > 0 || Pattern.FreeAnchor)
                 {
                     int slotNumber = SlotAssignment[npc];
-                    // Get the location of the current slot based on the formation pattern
                     var slotLocation = Pattern.GetSlotLocation(this, slotNumber);
 
-                    // Move NPC to the correct slot position using pathfinding
                     npc.StartPathfinding(slotLocation);
                     npc.GetComponent<NavMeshAgent>().updateRotation = true;
                 }

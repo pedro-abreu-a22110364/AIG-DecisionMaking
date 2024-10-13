@@ -7,69 +7,60 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 {
     public class GetManaPotion : WalkToTargetAndExecuteAction
     {
-        private const int MANA_RESTORE_AMOUNT = 10; // Amount of mana restored by the potion
+        private const int MANA_RESTORE_AMOUNT = 10;
 
         public GetManaPotion(AutonomousCharacter character, GameObject target)
             : base("GetManaPotion", character, target)
         {
         }
 
-        // Check if the action can be executed (e.g., the character needs mana)
         public override bool CanExecute()
         {
             if (!base.CanExecute()) return false;
-            return Character.baseStats.Mana < Character.baseStats.MaxMana; // Only execute if mana is not full
+            return Character.baseStats.Mana < Character.baseStats.MaxMana;
         }
 
-        // Check execution conditions in the world model (simulation)
         public override bool CanExecute(WorldModel worldModel)
         {
             if (!base.CanExecute(worldModel)) return false;
 
             var currentMana = (int)worldModel.GetProperty(PropertiesName.MANA);
             var maxMana = (int)worldModel.GetProperty(PropertiesName.MAXMANA);
-            return currentMana < maxMana; // Only execute if mana is less than max
+            return currentMana < maxMana;
         }
 
-        // Execute the action in the actual game world
         public override void Execute()
         {
             base.Execute();
-            GameManager.Instance.GetManaPotion(this.Target); // Call the game manager to get the mana potion
+            GameManager.Instance.GetManaPotion(this.Target);
         }
 
-        // Apply the effects of the action in the simulated world (i.e., update the world model)
         public override void ApplyActionEffects(WorldModel worldModel)
         {
             base.ApplyActionEffects(worldModel);
 
-            // Restore mana to the full amount
-            worldModel.SetProperty(PropertiesName.MANA, MANA_RESTORE_AMOUNT); // Set mana to the restored amount
+            worldModel.SetProperty(PropertiesName.MANA, MANA_RESTORE_AMOUNT);
 
             // Disable the target object in the simulation so it can't be reused
             worldModel.SetProperty(this.Target.name, false);
         }
 
-        // Predict how much this action will change the character's goals
         public override float GetGoalChange(Goal goal)
         {
             var change = base.GetGoalChange(goal);
 
             if (goal.Name == AutonomousCharacter.SURVIVE_GOAL)
             {
-                // If mana is needed for survival-related actions, reduce the insistence of the survival goal
-                change -= goal.InsistenceValue * 0.2f; // Adjust value based on mana importance
+                change -= goal.InsistenceValue * 0.2f;
             }
             else if (goal.Name == AutonomousCharacter.BE_QUICK_GOAL)
             {
-                // Mana might help with being quick, adjust accordingly
                 change += this.Duration;
             }
 
             return change;
         }
 
-        // Calculate the heuristic value of this action, depending on the character's current mana level
         public override float GetHValue(WorldModel worldModel)
         {
             var currentMana = (int)worldModel.GetProperty(PropertiesName.MANA);

@@ -64,7 +64,7 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.HeroActions
 
         public override float GetHValue(WorldModel worldModel)
         {
-            // if you are close to leveling up, choose this
+            // if close to leveling up, choose this
             int xp = (int)worldModel.GetProperty(PropertiesName.XP);
             int level = (int)worldModel.GetProperty(PropertiesName.LEVEL);
             return xp > level * 10 - 5 ? -10 : 10;
