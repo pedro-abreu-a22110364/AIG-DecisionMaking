@@ -172,10 +172,10 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
             }
 
             return currentState.GetScore();
-        } 
+        }
 
         //Secret Level 2 - Limited Playout MCTS
-        /*protected virtual float Playout(WorldModel initialStateForPlayout)
+        /* protected virtual float Playout(WorldModel initialStateForPlayout)
         {
             int depth = 0;
             var currentState = initialStateForPlayout.GenerateChildWorldModel();
@@ -201,10 +201,10 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
 
         protected virtual float HeuristicEvaluation(WorldModel state)
         {
-            float playerHealth = (int)state.GetProperty(PropertiesName.HP); 
+            float playerMoney = (int)state.GetProperty(PropertiesName.MONEY); 
             float playerLevel = (int)state.GetProperty(PropertiesName.LEVEL);
 
-            float heuristicScore = playerHealth * 0.5f
+            float heuristicScore = playerMoney * 0.5f
                                   + playerLevel * 1.0f;
 
             // Return the heuristic score
