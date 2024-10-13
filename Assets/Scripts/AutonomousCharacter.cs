@@ -258,14 +258,14 @@ public class AutonomousCharacter : NPC
             }
             else if (this.MCTSActive)
             {
-                //var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
-                var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                //var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
                 this.MCTSDecisionMaking = new MCTS(WorldModel, MCTS_MaxIterations, MCTS_MaxIterationsPerFrame, MCTS_NumberPlayouts, MCTS_MaxPlayoutDepth);
             }
             else if (this.MCTSBiasedPlayoutActive)
             {
-                //var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
-                var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                var WorldModel = new DictionaryWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
+                //var WorldModel = new FixedArrayWorldModel(GameManager.Instance, this, this.Actions, this.Goals);
                 this.MCTSDecisionMaking = new MCTSBiasedPlayout(WorldModel, MCTS_MaxIterations, MCTS_MaxIterationsPerFrame, MCTS_NumberPlayouts, MCTS_MaxPlayoutDepth);
             }
         }
