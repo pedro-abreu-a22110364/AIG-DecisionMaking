@@ -29,6 +29,11 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
                 depth++;
             }
 
+            if (!currentState.IsTerminal())
+            {
+                return this.HeuristicEvaluation(currentState);
+            }
+
             return currentState.GetScore(); // Return the final reward after the playout
         }
 
@@ -66,6 +71,17 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.MCTS
         protected float EvaluateActionHeuristic(HeroActions.Action action, WorldModel currentState)
         {
             return action.GetHValue(currentState);
+        }
+        protected virtual float HeuristicEvaluation(WorldModel state)
+        {
+            float playerMoney = (int)state.GetProperty(PropertiesName.MONEY);
+            float playerLevel = (int)state.GetProperty(PropertiesName.LEVEL);
+
+            float heuristicScore = playerMoney * 0.5f
+                                  + playerLevel * 1.0f;
+
+            // Return the heuristic score
+            return heuristicScore;
         }
     }
 }

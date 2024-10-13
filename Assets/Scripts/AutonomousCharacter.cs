@@ -78,7 +78,7 @@ public class AutonomousCharacter : NPC
     public int MCTS_NumberPlayouts = 1;
 
     [Header("Decision Algorithm Options")]
-    public bool ReactToEnemy;
+    public bool ReactToEnemy = true;
  
     //[Header("Hero Actions")]
     public bool LevelUp = true;
