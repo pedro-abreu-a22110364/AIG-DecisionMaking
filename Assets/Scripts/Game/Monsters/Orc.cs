@@ -40,7 +40,20 @@ namespace Assets.Scripts.Game.NPCs
 
             //Debug.Log(agent.name + ": Patrol point 1 - " + pos1 + "; Patrol point 2 - " + pos2);
 
-            this.StateMachine = new StateMachine(new Patrol(this,pos1,pos2,true));
+            bool inFormation = false;
+            foreach (FormationManager formation in GameManager.Instance.Formations)
+            {
+                if (formation != null && formation.SlotAssignment.ContainsKey(this))
+                {
+                    this.StateMachine = new StateMachine(new Sleep(this));
+                    inFormation = true;
+                }
+            }
+
+            if (!inFormation)
+            {
+                this.StateMachine = new StateMachine(new Patrol(this, pos1, pos2, true));
+            }
 
             //this.StateMachine = new StateMachine(new Sleep(this));
         }

@@ -145,6 +145,7 @@ public class GameManager : MonoBehaviour
 
         // Create the FormationManager with the selected formation type
         FormationManager formationManager = new FormationManager(orcMonsters, formationPattern, anchorPosition, orientation);
+        this.Formations.Add(formationManager);
 
         // Update the positions of the orcs based on the selected formation
         formationManager.UpdateSlots();

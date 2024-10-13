@@ -45,7 +45,14 @@ namespace Assets.Scripts.IAJ.Unity.DecisionMaking.StateMachine
 
         public override bool IsTriggered()
         {
-            return (Vector3.Distance(agent.transform.position, enemy.transform.position) <= agent.stats.AwakeDistance);
+            bool triggered = (Vector3.Distance(agent.transform.position, enemy.transform.position) <= agent.stats.AwakeDistance);
+
+            if (triggered && this.agent is Orc)
+            {
+                GameManager.Instance.BreakFormations();
+            }
+
+            return triggered;
         }
     }
 }
